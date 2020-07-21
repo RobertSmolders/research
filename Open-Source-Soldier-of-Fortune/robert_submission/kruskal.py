@@ -21,35 +21,7 @@ def correlation(prices, reverse=False):
         returns = np.log(prices.divide(prices.shift(-1))).iloc[:-1,:]
 
     #Calculate correlation matrix
-    correlation = pd.DataFrame(
-                    np.nan, index=returns.columns, 
-                    columns=returns.columns
-                    )
-
-    #Iterating over tickers
-    for i in range(0, returns.shape[1]):
-        
-        #Iterating over tickers, skipping half the matrix due to symmetry
-        for j in range(i, returns.shape[1]):
-
-            #Calculate numerator
-            num = (returns.iloc[:,i].multiply(returns.iloc[:,j]).mean() 
-                    - returns.iloc[:,i].mean() * returns.iloc[:,j].mean())
-
-            #Calculate denominator and correlation coefficient
-            if i == j:
-                denom = (np.power(returns.iloc[:,i], 2).mean() 
-                        - np.power(returns.iloc[:,i].mean(), 2))
-                correlation.iloc[i, i] = num / abs(denom)
-
-            elif i != j:
-                denom_i = (np.power(returns.iloc[:,i], 2).mean() 
-                            - np.power(returns.iloc[:,i].mean(), 2))
-                denom_j = (np.power(returns.iloc[:,j], 2).mean() 
-                            - np.power(returns.iloc[:,j].mean(), 2))
-                corr = num / np.power(denom_i*denom_j, 0.5)
-
-                correlation.iloc[i,j], correlation.iloc[j,i] = corr, corr
+    correlation = returns.corr()
 
     return correlation
 
